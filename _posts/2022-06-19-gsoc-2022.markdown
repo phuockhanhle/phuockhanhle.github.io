@@ -1,0 +1,14 @@
+---
+layout: post
+title:  "Google Summer of Code 2022 : DigiKam Image Quality Sorter Algorithms Improvement"
+date:   2022-06-19 16:41:53 +0200
+categories: jekyll update
+---
+## Project description
+The main idea of IQS in digiKam is to determine the quality of an image and convert it into a score. This score is based on four criteria which are factors sabotaging image: blur, noise, exposure, and compression. The current approach is useful to determine images distorted by one of these reasons. However, the current algorithm presents also some drawbacks : It demands a lots of fine tuning from user's side and it's cannot work on aesthetic image. So, I propose the solution of deep learning algorithm. While the dataset and the paper for aesthetic image quality assessment are free to use, we are capable of constructing a mathematical model that can learn the pattern of a dataset, hence, predict the score of quality. As deep learning is an end-to-end solution, it doesn’t require the setting for the hyperparameters. Hence, we can reduce most of the fine-tuning parts to make this feature easier to use
+
+Check out the [IQS Proposal][jekyll-docs] for more info about description and algorithm of the project.
+## First week 13/06/2022
+
+
+[project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf

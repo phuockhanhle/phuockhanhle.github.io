@@ -7,8 +7,28 @@ categories: jekyll update
 ## Project description
 The main idea of IQS in digiKam is to determine the quality of an image and convert it into a score. This score is based on four criteria which are factors sabotaging image: blur, noise, exposure, and compression. The current approach is useful to determine images distorted by one of these reasons. However, the current algorithm presents also some drawbacks : It demands a lots of fine tuning from user's side and it's cannot work on aesthetic image. So, I propose the solution of deep learning algorithm. While the dataset and the paper for aesthetic image quality assessment are free to use, we are capable of constructing a mathematical model that can learn the pattern of a dataset, hence, predict the score of quality. As deep learning is an end-to-end solution, it doesn’t require the setting for the hyperparameters. Hence, we can reduce most of the fine-tuning parts to make this feature easier to use
 
-Check out the [IQS Proposal][jekyll-docs] for more info about description and algorithm of the project.
+Check out the [IQS Proposal][project-proposal] for more info about description and algorithm of the project.
 ## First week 13/06/2022
+
+As described in the proposal, the first week is dedicated for experimenting and reproducing the result of two target algorithm [NIMA][NIMA-repo] and [musiq][musiq-repo].
+
+My purpose is testing and training the deep learning model following the algorithms. Hence, only the code needed for these tasks is extracted from their repos. All is published in my own one [iqs digikam][iqs-digikam-repo].
+
+These are my principal task in my first week : 
+- Install environment for running python code of NIMA and musiq.
+- Download dataset of EVA and AVA dataset.
+- Write training and testing script for NIMA.
+- Adapt the label of 2 datasets for the context of NIMA.
+
+Current problem : data unbalance as most of sample's score is around 5. So, the model converges to predict image to 5. It will make the MSE -> variance of score. Hence, we can not conclude the performance of model
+
+Ideal to resolve :
+- Get the range where most of score are in, consider this range as 0 -> 10
+- Augment data of different range / reduce data of concentrated range in order to have balance dataset
+- Change metric that consider more result different region score
 
 
 [project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf
+[iqs-digikam-repo]: https://github.com/phuockhanhle/iqs-digikam
+[NIMA-repo]: https://github.com/idealo/image-quality-assessment
+[musiq-repo]: https://github.com/google-research/google-research/tree/master/musiq

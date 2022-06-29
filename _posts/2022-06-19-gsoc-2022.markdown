@@ -20,15 +20,46 @@ These are my principal task in my first week :
 - Write training and testing script for NIMA.
 - Adapt the label of 2 datasets for the context of NIMA.
 
-Current problem : data unbalance as most of sample's score is around 5. So, the model converges to predict image to 5. It will make the MSE -> variance of score. Hence, we can not conclude the performance of model
+Achievement in first week :
+- For now, using python, I can train, evaluate and predict on each image.
+- Using the pretrained model of the paper achieves a good performance : MSE = 0.3107 (means the variance is 3.1 on the scale score of IQS digiKam)
+
+Current problem : 
+- Data unbalance as most of sample's score is around 5. So, the model converges to predict image to 5. It will make the MSE -> variance of score. Hence, we can not conclude the performance of model
+- Training by our own dataset doesn't achieve performance as the paper
 
 Ideal to resolve :
-- Get the range where most of score are in, consider this range as 0 -> 10
 - Augment data of different range / reduce data of concentrated range in order to have balance dataset
-- Change metric that consider more result different region score
+- Change metric that consider more weighted on result of different region score
 
+
+## Second week 20/06/2022
+
+As described in the last post, the current metric for regression (MSE) is not suitable for imbalanced data, hence, I consider a branch new metric :
+- As our use-case at the end is classification between 3 class : bad, normal and good image,hence, I split the data into 3 class with same meaning. As most of the images are in class normal, the data is still imbalanced, hence, I use [F1 score][F1_score] for evaluation.
+- [Spearman's rank correlation coefficient][SRCC] is a metric to evaluate the similarity between 2 distribution. Hence, the more similar between prediction and reference, the better the performance of the model
+
+After having these 2 metrics, I re-evaluate the function model of NIMA: The checkpoint given by the paper still achieves the best performance : 0.589 on F1 score for class of digiKam
+
+As I explained in last week, we need a balance dataset that the score is evenly distributed. I made research on new dataset for image quality assessment:
+- [SPAQ][SPAQ] dataset is a dataset for image quality assessment which evaluates each image by a score from 0 to 100. The distribution is show in the image [].
+
+For the sake of achieving the performance of the paper without using the checkout proposed by the image, I finetune the model for various situation:
+- Fine-tuning on number of epochs : number of training-dense epochs and number of full training model. The best combination is 3 epochs for dense training and 7 epochs for full model training.
+- Testing on variant of base model : MobileNet, InceptionV2, InceptionV3, VGG16. The model using VGG16 showed the best precision.
+- However, I did not yet archive the performance as the paper.
+
+Upcoming task:
+- Combining various datasets could create a balanced dataset.
+- Training on combined dataset
+- Training from the pre-trained weight of the paper.
+
+## Third week 27/06/2022
 
 [project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf
 [iqs-digikam-repo]: https://github.com/phuockhanhle/iqs-digikam
 [NIMA-repo]: https://github.com/idealo/image-quality-assessment
 [musiq-repo]: https://github.com/google-research/google-research/tree/master/musiq
+[SRCC]: https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient
+[F1_score]: https://medium.com/synthesio-engineering/precision-accuracy-and-f1-score-for-multi-label-classification-34ac6bdfb404
+[SPAQ]: https://github.com/h4nwei/SPAQ

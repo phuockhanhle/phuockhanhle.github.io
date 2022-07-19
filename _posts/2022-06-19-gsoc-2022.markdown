@@ -82,6 +82,8 @@ This is the result after testing with different base model and hyperparameter. I
 - Number epochs : 8
 - dropout rate : 0.75
 
+**Main current problem** : As the purpose is to have a balanced data, I choose the threshold is 5 and 6, it means if the score <= 5, the image is labeled as 0, 5 < score <= 6 is for normal, and the rest is for good image. This is too much objectif, so the images that are labeled 0 is not really bad, or the images are labeled 2 is not really too well, it gives the confusion for model.
+**Solution** Get bad image from different dataset could be a good solution, for example koniq10k
 
 [project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf
 [iqs-digikam-repo]: https://github.com/phuockhanhle/iqs-digikam

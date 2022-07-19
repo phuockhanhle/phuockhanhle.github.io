@@ -63,6 +63,26 @@ Before integrating in digiKam's repo, I tried to compile a small C++ with opencv
 - On C++ side, having opencv from 4.5.5 is a requirement.
 - At last, we only need to read model from file, read image, and calculate the output of the model. This is a small example of [inference][inference-c++]
 
+## Fourth and Fifth week 04/07/2022 - 17/07/2022
+
+The work of these two weeks is to resolve the problem of imbalanced dataset. I have come to a reasonable solution for digiKam. 
+
+In fact, at the end, we would like to have a label of bad, normal or good for an image. So this is a classification problem. That 's why I realize these steps :
+- Re-label the dataset by only 3 class, I separate class by it quality score. 
+- - In order to have a balance dataset, I use only 9000 images for each class, as most of the images are in normal dataset
+- Change the last layer of the model to dense of softmax. This is a layer using [softmax][softmax] activation function. Hence, the result is percentage of an image belonged to each class.
+- Change the lost function applied to train the model, from earth movers distance to categorical entropy.
+- Change also the metric to evaluate the model : the first one is the percentage of true prediction on evaluation set, hence the second one is f1 score on each dataset. While the first matrix is more natural to human's understanding, the second represent the capacity of the model to recognize on each class.
+
+After experimenting, the model shows expected result. The percentage of true prediction is 0.721. F1 score is 0.76457837 0.67457114 0.74173304 on each class.
+This is the result after testing with different base model and hyperparameter. I conclude to this configuration : 
+- Base model : [InceptionResNetV2][InceptionResNetV2]
+- Batch size : 16
+- Learning rate : 0.0005
+- Number epochs : 8
+- dropout rate : 0.75
+
+
 [project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf
 [iqs-digikam-repo]: https://github.com/phuockhanhle/iqs-digikam
 [NIMA-repo]: https://github.com/idealo/image-quality-assessment
@@ -72,3 +92,5 @@ Before integrating in digiKam's repo, I tried to compile a small C++ with opencv
 [SPAQ]: https://github.com/h4nwei/SPAQ
 [freeze-model]: https://blog.metaflow.fr/tensorflow-how-to-freeze-a-model-and-serve-it-with-a-python-api-d4f3596b3adc
 [inference-c++]: https://github.com/phuockhanhle/iqs-digikam/blob/inference_cpp/inference/inference_iqs/inference_iqs.cpp
+[softmax]: https://en.wikipedia.org/wiki/Softmax_function
+[InceptionResNetV2]: https://keras.io/api/applications/inceptionresnetv2/

@@ -83,6 +83,7 @@ This is the result after testing with different base model and hyperparameter. I
 - dropout rate : 0.75
 
 **Main current problem** : As the purpose is to have a balanced data, I choose the threshold is 5 and 6, it means if the score <= 5, the image is labeled as 0, 5 < score <= 6 is for normal, and the rest is for good image. This is too much objectif, so the images that are labeled 0 is not really bad, or the images are labeled 2 is not really too well, it gives the confusion for model.
+
 **Solution** Get bad image from different dataset could be a good solution, for example koniq10k
 
 ## Sixth week 18/07/2022 - 24/07/2025
@@ -90,8 +91,10 @@ This is the result after testing with different base model and hyperparameter. I
 As I would like to send more time on research after the first evaluation, I changed a little in my plan. In this week, I realize the main classes of aesthetic detection and intergrate to digiKam. As I have changed the architechture of the model in the last week, the aesthetic deteciton cli shoule be changed also. The main problem is to perform exactly the preprocess image from python to c++.
 
 Before implementing the core class of aesthetic detection, I realized a small unittest. I get 3 images which are classified as good image in AVA dataset, and 3 images of bad quality that are already in data of image quality sort.
-![Good image for unit test](../image/aesthetic_1.jpg)
-![Bad image for unit test](../image/general_bad_image_1.jpg)
+
+![Good image for unit test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/aesthetic_1.jpg)
+
+![Bad image for unit test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/general_bad_image_1.jpg)
 
 After having the unit test, I implement the aesthetic detector in order to pass the unit test. Fortunately, the architechture of detector of image quality sorter is well defined. Hence, I implement only the main functions of aesthetic detection based on the aesthetic cli. There are only 3 main methods :
 - *Preprocessing* : The preprocessing process should be exactly the same to what is done in python. The image is transformed from blue-green-red mode to red-green-blue mode, then resized to 22x224 with INTER_NEAREST_EXACT interpolation. At the end, the eah pixel is normalize to -1 and 1.

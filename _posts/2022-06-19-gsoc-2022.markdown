@@ -103,7 +103,7 @@ After having the unit test, I implement the aesthetic detector in order to pass 
 
 The implementation of aesthetic detection passes all unit test. However, we have the problem of the similarity between aesthetic cli and aesthetic detector. While they gives both same prediction of the class, the score is slightly different. The reason is the way thay read the image from file. While the cli uses *imread* method from opencv to read the image, the detector uses loading image thread of digikam with size of 1024 x 1024. This could be cause the problem in the future.
 
-**Current problem** : The file model path should be dynamic to the repo of digikam. However, the file is too large and can not be handled by github.
+**Current problem** : The file model path should be dynamic to the repo of digikam. However, the file is too large and can not be handled by github. For now, I hardcode the link of the model file. The model file can be downloaded from [here][Model-path]
 
 ## First phase resume
 
@@ -138,3 +138,4 @@ TODO:
 [inference-c++]: https://github.com/phuockhanhle/iqs-digikam/blob/inference_cpp/inference/inference_iqs/inference_iqs.cpp
 [softmax]: https://en.wikipedia.org/wiki/Softmax_function
 [InceptionResNetV2]: https://keras.io/api/applications/inceptionresnetv2/
+[Model-path]: https://drive.google.com/file/d/1c4uVuyLp_eqE1vLCEVgU0LXv1ik5YgA1/view?usp=sharing

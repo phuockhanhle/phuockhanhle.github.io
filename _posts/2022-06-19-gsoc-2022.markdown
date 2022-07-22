@@ -37,7 +37,7 @@ Achievement in first week :
 **Figure2** : distribution of score of EVA dataset
 
 
-Ideal to resolve :
+**Ideal to resolve :**
 - Augment data of different range / reduce data of concentrated range in order to have balance dataset
 - Change metric that consider more weighted on result of different region score
 
@@ -58,7 +58,7 @@ For the sake of achieving the performance of the paper without using the checkou
 - Testing on variant of base model : MobileNet, InceptionV2, InceptionV3, VGG16. The model using VGG16 showed the best precision.
 - However, I did not yet archive the performance as the paper.
 
-Upcoming task:
+**Upcoming task:**
 - Combining various datasets could create a balanced dataset.
 - Training on combined dataset
 - Training from the pre-trained weight of the paper.
@@ -83,7 +83,8 @@ In fact, at the end, we would like to have a label of bad, normal or good for an
 - Change the lost function applied to train the model, from earth movers distance to categorical entropy.
 - Change also the metric to evaluate the model : the first one is the percentage of true prediction on evaluation set, hence the second one is f1 score on each dataset. While the first matrix is more natural to human's understanding, the second represent the capacity of the model to recognize on each class.
 
-After experimenting, the model shows expected result. To evaluate the model, I use the evaluation set of AVA after labeling with classification. There are *14.702* images with *3.626* images from class 2 ( good images), *6.862* images from class 1 ( normal images), *4.214* images from class 1 ( bad images) The percentage of true prediction is 0.721. F1 score is 0.76457837 0.67457114 0.74173304 on each class. This [file][AVA-pred-file] shows the label and the prediction of each image of AVA dataset.
+After experimenting, the model shows expected result. To evaluate the model, I use the evaluation set of AVA after labeling with classification. There are *14.702* images with *3.626* images from class 2 ( good images), *6.862* images from class 1 ( normal images), *4.214* images from class 1 ( bad images) The percentage of true prediction is *0.721*. F1 score is *0.764 0.674 0.741* on each class. This [file][AVA-pred-file] shows the label and the prediction of each image of AVA dataset.
+
 This is the result after training and testing with different base model and hyperparameter. I conclude to this configuration : 
 - Base model : [InceptionResNetV2][InceptionResNetV2]
 - Batch size : 16

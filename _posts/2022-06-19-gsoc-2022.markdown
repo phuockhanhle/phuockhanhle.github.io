@@ -12,7 +12,7 @@ Check out the [IQS Proposal][project-proposal] for more info about description a
 
 As described in the proposal, the first week is dedicated for experimenting and reproducing the result of two target algorithm [NIMA][NIMA-repo] and [musiq][musiq-repo].
 
-My purpose is testing and training the deep learning model following the algorithms. Hence, only the code needed for these tasks is extracted from their repos. All is published in my own one [iqs digikam][iqs-digikam-repo].
+My purpose is testing and training the deep learning model following the algorithms. Hence, only the code needed for these tasks is extracted from their repos. All is published in my own repose [iqs digikam][iqs-digikam-repo].
 
 These are my principal task in my first week : 
 - Install environment for running python code of NIMA and musiq.
@@ -74,17 +74,17 @@ Before integrating in digiKam's repo, I tried to compile a small C++ with opencv
 
 ## Fourth and Fifth week 04/07/2022 - 17/07/2022
 
-The work of these two weeks is to resolve the problem of imbalanced dataset. I have come to a reasonable solution for digiKam. 
+As mentioned in the second week, I change the metric to consider the problem as classification with 3 classes. However, changing the metric doesn't help us to improve the performance of the model. Because the model still trains with the loss function of regression problem. Secondly, training data is still imbalanced as their score is always around 5. The work of these two weeks is to resolve the problem of imbalanced dataset. I have come to a reasonable solution for digiKam. 
 
 In fact, at the end, we would like to have a label of bad, normal or good for an image. So this is a classification problem. That 's why I realize these steps :
 - Re-label the dataset by only 3 class, I separate class by it quality score. 
-- - In order to have a balance dataset, I use only 9000 images for each class, as most of the images are in normal dataset
+- In order to have a balance dataset, I use only 9000 images for each class, as most of the images are in normal dataset. 
 - Change the last layer of the model to dense of softmax. This is a layer using [softmax][softmax] activation function. Hence, the result is percentage of an image belonged to each class.
 - Change the lost function applied to train the model, from earth movers distance to categorical entropy.
 - Change also the metric to evaluate the model : the first one is the percentage of true prediction on evaluation set, hence the second one is f1 score on each dataset. While the first matrix is more natural to human's understanding, the second represent the capacity of the model to recognize on each class.
 
-After experimenting, the model shows expected result. The percentage of true prediction is 0.721. F1 score is 0.76457837 0.67457114 0.74173304 on each class.
-This is the result after testing with different base model and hyperparameter. I conclude to this configuration : 
+After experimenting, the model shows expected result. To evaluate the model, I use the evaluation set of AVA after labeling with classification. There are *14.702* images with *3.626* images from class 2 ( good images), *6.862* images from class 1 ( normal images), *4.214* images from class 1 ( bad images) The percentage of true prediction is 0.721. F1 score is 0.76457837 0.67457114 0.74173304 on each class. This [file][AVA-pred-file] shows the label and the prediction of each image of AVA dataset.
+This is the result after training and testing with different base model and hyperparameter. I conclude to this configuration : 
 - Base model : [InceptionResNetV2][InceptionResNetV2]
 - Batch size : 16
 - Learning rate : 0.0005
@@ -93,21 +93,21 @@ This is the result after testing with different base model and hyperparameter. I
 
 **Main current problem** : As the purpose is to have a balanced data, I choose the threshold is 5 and 6, it means if the score <= 5, the image is labeled as 0, 5 < score <= 6 is for normal, and the rest is for good image. This is too much objectif, so the images that are labeled 0 is not really bad, or the images are labeled 2 is not really too well, it gives the confusion for model.
 
-**Solution** Get bad image from different dataset could be a good solution, for example koniq10k
+**Solution** Using combined dataset could be a good solution. 
 
 ## Sixth week 18/07/2022 - 24/07/2025
 
-As I would like to send more time on research after the first evaluation, I changed a little in my plan. In this week, I realize the main classes of aesthetic detection and intergrate to digiKam. As I have changed the architechture of the model in the last week, the aesthetic deteciton cli shoule be changed also. The main problem is to perform exactly the preprocess image from python to c++.
+As I would like to spend more time on research after the first evaluation, I changed a little in my plan. In this week, I realize the main classes of aesthetic detection and intergrate to digiKam. As I have changed the architechture of the model in the last week, the aesthetic deteciton cli shoule be changed also. The main problem is to perform exactly the preprocess image from python to c++.
 
-Before implementing the core class of aesthetic detection, I realized a small unittest. I get 3 images which are classified as good image in AVA dataset, and 3 images of bad quality that are already in data of image quality sort.
+Before implementing the core class of aesthetic detection, I did a small unittest. I get 3 images which are classified as good image in AVA dataset, and 3 images of bad quality that are already in data of image quality sort.
 
 ![Good-image-for-unit-test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/aesthetic_1.jpg?raw=true)
 
-**Figure1:** Aesthetic image from AVA dataset
+**Figure3:** Aesthetic image from AVA dataset
 
 ![Bad image for unit test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/general_bad_image_1.jpg?raw=true)
 
-**Figure2:** Bad image from IQS digiKam unit test
+**Figure4:** Bad image from IQS digiKam unit test
 
 After having the unit test, I implement the aesthetic detector in order to pass the unit test. Fortunately, the architechture of detector of image quality sorter is well defined. Hence, I implement only the main functions of aesthetic detection based on the aesthetic cli. There are only 3 main methods :
 - *Preprocessing* : The preprocessing process should be exactly the same to what is done in python. The image is transformed from blue-green-red mode to red-green-blue mode, then resized to 22x224 with INTER_NEAREST_EXACT interpolation. At the end, the eah pixel is normalize to -1 and 1.
@@ -122,7 +122,7 @@ The implementation of aesthetic detection passes all unit test. However, we have
 
 This part is dedicated to resume the achivements, problems, TODO list and idea in the first phase of GSOC22.
 Achievements:
-- (*research side*) Realize data pipeline for AVA and EVA dataset.
+- (*research side*) Complete data pipeline for AVA and EVA dataset.
 - (*research side*) Analyze data to retrive the main problem : imbalanced dataset -> most of image are labeled with score from 4 to 6 in scale of 10.
 - (*research side*) Train, test and, experiment [NIMA][NIMA-repo] on AVA and EVA dataset -> confirm the problem of imbalanced dataset.
 - (*research side*) Change the problem to 3-classes classification based on digikam context, re-implement data labeling and change the last layer of the model to adapt the new context. Achieve an acceptable result on AVA dataset evaluation set :  72.1% of true prediction.
@@ -152,3 +152,4 @@ TODO:
 [softmax]: https://en.wikipedia.org/wiki/Softmax_function
 [InceptionResNetV2]: https://keras.io/api/applications/inceptionresnetv2/
 [Model-path]: https://drive.google.com/file/d/1c4uVuyLp_eqE1vLCEVgU0LXv1ik5YgA1/view?usp=sharing
+[AVA-pred-file]: https://raw.githubusercontent.com/phuockhanhle/iqs-digikam/main/data/AVA_dataset/NIMA_config/pred.json

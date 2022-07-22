@@ -24,8 +24,8 @@ Achievement in first week :
 - For now, using python, I can train, evaluate and predict on each image.
 - Using the pretrained model of the paper achieves a good performance : MSE = 0.3107 (means the variance is 3.1 on the scale score of IQS digiKam)
 
-Current problem : 
-- Data unbalance as most of sample's score is around 5. So, the model converges to predict image to 5. It will make the MSE -> variance of score. Hence, we can not conclude the performance of model
+**Current problem **:
+- Most of images are labeled with score around of 5. This is reasonable as if then annotator can not be sure about the quality of the image, they will give the score of 4, 5 or 6. It makes the problem of evaluation the model. The metric MSE will show that it is a good model even when the model will predict all the image with score of 5.
 - Training by our own dataset doesn't achieve performance as the paper
 
 Ideal to resolve :
@@ -92,9 +92,9 @@ As I would like to send more time on research after the first evaluation, I chan
 
 Before implementing the core class of aesthetic detection, I realized a small unittest. I get 3 images which are classified as good image in AVA dataset, and 3 images of bad quality that are already in data of image quality sort.
 
-![Good image for unit test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/aesthetic_1.jpg)
+![Good image for unit test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/aesthetic_1.jpg?raw=true)
 
-![Bad image for unit test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/general_bad_image_1.jpg)
+![Bad image for unit test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/general_bad_image_1.jpg?raw=true)
 
 After having the unit test, I implement the aesthetic detector in order to pass the unit test. Fortunately, the architechture of detector of image quality sorter is well defined. Hence, I implement only the main functions of aesthetic detection based on the aesthetic cli. There are only 3 main methods :
 - *Preprocessing* : The preprocessing process should be exactly the same to what is done in python. The image is transformed from blue-green-red mode to red-green-blue mode, then resized to 22x224 with INTER_NEAREST_EXACT interpolation. At the end, the eah pixel is normalize to -1 and 1.

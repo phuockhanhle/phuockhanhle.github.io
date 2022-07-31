@@ -142,7 +142,29 @@ TODO:
 
 ## Sixth week 25/07/2022 - 31/07/2025
 
-As explained in the resume of last week, we can improve the model be combining different dataset. The main idea is create a most generalized dataset. These experiments help us evaluate better the performance of the model's architecture. 
+As explained in the resume of last week, we can improve the model be combining different dataset. The main idea is to create a most generalized dataset. These experiments help us evaluate better the performance of the model's architecture. At first, we need to choose which dataset to be combined. AVA and EVA dataset is a good choice as all of their images are aesthetic image. On the other hand, the dataset Koniq10k contains the images with different levels of distortion. Although images with distortion are not necessary aesthetic, images which are too much distorted are absolutely bad image. Hence, I added bad images of Koniq10k to evaluation set. 
+
+These are some hyper-parameters to combined dataset:
+- Dataset AVA : bad images ( score <= 5); normal images ( score <= 6); good images ( score > 6)
+- Dataset EVA : bad images ( score <= 5); normal images ( score <= 7); good images ( score > 7)
+- Dataset Koniq10k : get only bad image with score < 40.
+
+After having evaluation set, I re-evaluated the model that was produced in the first phase. As expected, I observed a big loss of the accuracy on combined evaluation set. By the same way of concatenating datasets, I created the combined dataset for training. These are some portion of each class in evaluation set and training set :
+
+| Data set       | % of bad image | % of normal image | % of good image |
+|----------------|----------------|-------------------|-----------------|
+| Evaluation set |27.56%          |44.99%             |27.50%           |
+| Training set   |0               |0                  |0                |
+
+After experimenting and fine-tuning with the same process in the first phase, I achieved an good improvement 
+
+|The model                          | Accuracy on AVA | Accuracy on combined dataset|
+|----------------------------------|-----------------|-----------------------------|
+|Model trained on AVA dataset      |0.721            |0.542                        |
+|Model trained on combined dataset |0.70             |0.64                         |
+
+**TODO** : In the next week, I would like to improve the model by changing the architecture inside, the main idea is using a smaller base model but more dense of fully connected at the end of the model
+
 
 
 [project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf

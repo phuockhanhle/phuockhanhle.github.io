@@ -5,7 +5,7 @@ date:   2022-06-19 16:41:53 +0200
 categories: jekyll update
 ---
 ## Project description
-The main idea of IQS in digiKam is to determine the quality of an image and convert it into a score. This score is based on four criteria which are factors sabotaging image: blur, noise, exposure, and compression. The current approach is useful to determine images distorted by one of these reasons. However, the current algorithm presents also some drawbacks : It demands a lots of fine tuning from user's side and it's cannot work on aesthetic image. So, I propose the solution of deep learning algorithm. While the dataset and the paper for aesthetic image quality assessment are free to use, we are capable of constructing a mathematical model that can learn the pattern of a dataset, hence, predict the score of quality. As deep learning is an end-to-end solution, it doesn’t require the setting for the hyperparameters. Hence, we can reduce most of the fine-tuning parts to make this feature easier to use
+The main idea of IQS in digiKam is to determine the quality of an image and convert it into a score. This score is based on four criteria which are factors sabotaging image: blur, noise, exposure, and compression. The current approach is useful to determine images distorted by one of these reasons. However, the current algorithm presents also some drawbacks : It demands a lots of fine tuning from user's side and it's cannot work on aesthetic image. So, I propose the solution of deep learning algorithm. While the dataset and the paper for aesthetic image quality assessment are free to use, we are capable of constructing a mathematical model that can learn the pattern of a dataset, hence, predict the score of quality. As deep learning is an end-to-end solution, it doesn’t require the setting for the hyperparameter. Hence, we can reduce most of the fine-tuning parts to make this feature easier to use
 
 Check out the [IQS Proposal][project-proposal] for more info about description and algorithm of the project.
 ## First week 13/06/2022
@@ -22,17 +22,17 @@ These are my principal task in my first week :
 
 Achievement in first week :
 - For now, using python, I can train, evaluate and predict on each image.
-- Using the pretrained model of the paper achieves a good performance : MSE = 0.3107 (means the variance is 3.1 on the scale score of IQS digiKam)
+- Using the pre-trained model of the paper achieves a good performance : MSE = 0.3107 (means the variance is 3.1 on the scale score of IQS digiKam)
 
 **Current problem**:
 - Most of images are labeled with score around of 5. This is reasonable as if then annotator can not be sure about the quality of the image, they will give the score of 4, 5 or 6. It makes the problem of evaluation the model. The metric MSE will show that it is a good model even when the model will predict all the image with score of 5. These 2 images shows the distribution of the score on 2 datasets : AVA and EVA:
 
-![AVA analyse](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/ava_analyse.png?raw=true)
+![AVA analyses](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/ava_analyse.png?raw=true)
 
 **Figure1** : distribution of score of AVA dataset
 
 
-![EVA analyse](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/eva_analyse.png?raw=true)
+![EVA analyses](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/eva_analyse.png?raw=true)
 
 **Figure2** : distribution of score of EVA dataset
 
@@ -53,7 +53,7 @@ After having these 2 metrics, I re-evaluate the function model of NIMA: The chec
 As I explained in last week, we need a balance dataset that the score is evenly distributed. I made research on new dataset for image quality assessment:
 - [SPAQ][SPAQ] dataset is a dataset for image quality assessment which evaluates each image by a score from 0 to 100.
 
-For the sake of achieving the performance of the paper without using the checkout proposed by the image, I finetune the model for various situation:
+For the sake of achieving the performance of the paper without using the checkout proposed by the image, I fine-tune the model for various situation:
 - Fine-tuning on number of epochs : number of training-dense epochs and number of full training model. The best combination is 3 epochs for dense training and 7 epochs for full model training.
 - Testing on variant of base model : MobileNet, InceptionV2, InceptionV3, VGG16. The model using VGG16 showed the best precision.
 - However, I did not yet archive the performance as the paper.
@@ -65,10 +65,10 @@ For the sake of achieving the performance of the paper without using the checkou
 
 ## Third week 27/06/2022
 
-Although the research wasn't finished yet, we can already use the pretrained model published by NIMA with an acceptable performance. Hence, following the timeline in my proposal, the next step would be using the model in C++.
+Although the research wasn't finished yet, we can already use the pre-trained model published by NIMA with an acceptable performance. Hence, following the timeline in my proposal, the next step would be using the model in C++.
 
-Before integrating in digiKam's repo, I tried to compile a small C++ with opencv. Then, using module DNN of opencv to read the image, read the pretrained model, and calculate the score of the image. To do that, there are some step to do:
-- In Python side, the pretrained model file must be [freeze the weight][freeze-model], this is a specific technique so the model file could be read by opencv
+Before integrating in digiKam's repo, I tried to compile a small C++ with opencv. Then, using module DNN of opencv to read the image, read the pre-trained model, and calculate the score of the image. To do that, there are some step to do:
+- In Python side, the pre-trained model file must be [freeze the weight][freeze-model], this is a specific technique so the model file could be read by opencv
 - On C++ side, having opencv from 4.5.5 is a requirement.
 - At last, we only need to read model from file, read image, and calculate the output of the model. This is a small example of [inference][inference-c++]
 
@@ -92,13 +92,13 @@ This is the result after training and testing with different base model and hype
 - Number epochs : 8
 - dropout rate : 0.75
 
-**Main current problem** : As the purpose is to have a balanced data, I choose the threshold is 5 and 6, it means if the score <= 5, the image is labeled as 0, 5 < score <= 6 is for normal, and the rest is for good image. This is too much objectif, so the images that are labeled 0 is not really bad, or the images are labeled 2 is not really too well, it gives the confusion for model.
+**Main current problem** : As the purpose is to have a balanced data, I choose the threshold is 5 and 6, it means if the score <= 5, the image is labeled as 0, 5 < score <= 6 is for normal, and the rest is for good image. This is too much objective, so the images that are labeled 0 is not really bad, or the images are labeled 2 is not really too well, it gives the confusion for model.
 
 **Solution** Using combined dataset could be a good solution. 
 
 ## Sixth week 18/07/2022 - 24/07/2025
 
-As I would like to spend more time on research after the first evaluation, I changed a little in my plan. In this week, I realize the main classes of aesthetic detection and intergrate to digiKam. As I have changed the architechture of the model in the last week, the aesthetic deteciton cli shoule be changed also. The main problem is to perform exactly the preprocess image from python to c++.
+As I would like to spend more time on research after the first evaluation, I changed a little in my plan. In this week, I realize the main classes of aesthetic detection and integrate to digiKam. As I have changed the architecture of the model in the last week, the aesthetic detection cli should be changed also. The main problem is to perform exactly the preprocessed image from python to c++.
 
 Before implementing the core class of aesthetic detection, I did a small unittest. I get 3 images which are classified as good image in AVA dataset, and 3 images of bad quality that are already in data of image quality sort.
 
@@ -110,39 +110,39 @@ Before implementing the core class of aesthetic detection, I did a small unittes
 
 **Figure4:** Bad image from IQS digiKam unit test
 
-After having the unit test, I implement the aesthetic detector in order to pass the unit test. Fortunately, the architechture of detector of image quality sorter is well defined. Hence, I implement only the main functions of aesthetic detection based on the aesthetic cli. There are only 3 main methods :
+After having the unit test, I implement the aesthetic detector in order to pass the unit test. Fortunately, the architecture of detector of image quality sorter is well defined. Hence, I implement only the main functions of aesthetic detection based on the aesthetic cli. There are only 3 main methods :
 - *Preprocessing* : The preprocessing process should be exactly the same to what is done in python. The image is transformed from blue-green-red mode to red-green-blue mode, then resized to 22x224 with INTER_NEAREST_EXACT interpolation. At the end, the eah pixel is normalize to -1 and 1.
 - *Serving model* : The model is loaded from a pb file. This is the model file of tensorflow. Opencv dnn is developed well in this path.
 - *Postprocessing*: The output of a deep learning model is only a matrix with score. Based on the meaning of the last layer, these scores have different meaning. In our case, the score is a matrix of 3 float number representing the probability that the image is belonged to each class.
 
-The implementation of aesthetic detection passes all unit test. However, we have the problem of the similarity between aesthetic cli and aesthetic detector. While they gives both same prediction of the class, the score is slightly different. The reason is the way thay read the image from file. While the cli uses *imread* method from opencv to read the image, the detector uses loading image thread of digikam with size of 1024 x 1024. This could be cause the problem in the future.
+The implementation of aesthetic detection passes all unit test. However, we have the problem of the similarity between aesthetic cli and aesthetic detector. While they gives both same prediction of the class, the score is slightly different. The reason is the way they read the image from file. While the cli uses *imread* method from opencv to read the image, the detector uses loading image thread of digikam with size of 1024 x 1024. This could be cause the problem in the future.
 
 **Current problem** : The file model path should be dynamic to the repo of digikam. However, the file is too large and can not be handled by github. For now, I hardcode the link of the model file. The model file can be downloaded from [here][Model-path]
 
 ## First phase resume
 
-This part is dedicated to resume the achivements, problems, TODO list and idea in the first phase of GSOC22.
+This part is dedicated to resume the achievements, problems, TODO list and idea in the first phase of GSOC22.
 Achievements:
 - (*research side*) Complete data pipeline for AVA and EVA dataset.
-- (*research side*) Analyze data to retrive the main problem : imbalanced dataset -> most of image are labeled with score from 4 to 6 in scale of 10.
+- (*research side*) Analyze data to retrieve the main problem : imbalanced dataset -> most of image are labeled with score from 4 to 6 in scale of 10.
 - (*research side*) Train, test and, experiment [NIMA][NIMA-repo] on AVA and EVA dataset -> confirm the problem of imbalanced dataset.
 - (*research side*) Change the problem to 3-classes classification based on digikam context, re-implement data labeling and change the last layer of the model to adapt the new context. Achieve an acceptable result on AVA dataset evaluation set :  72.1% of true prediction.
-- (*integration side*) Implement aesthetic detection cli that can recieve a model path and a image path, to get the score of quality of the image.
+- (*integration side*) Implement aesthetic detection cli that can receive a model path and a image path, to get the score of quality of the image.
 - (*integration side*) Implement aesthetic detector classes in digikam code base and aesthetic unit test.
 
 Problem:
-- (*research side*) Labeling class image based on its score is too much objectif. Hence, the model is easy to confuse between bad image and normal image, or normal image and good image.
-- (*research side*) MUSISQ is not yet well researched as it is implemented in non-popular framework JAX, and the pretrained file can not be read by opencv.
+- (*research side*) Labeling class image based on its score is too much objective. Hence, the model is easy to confuse between bad image and normal image, or normal image and good image.
+- (*research side*) MUSISQ is not yet well researched as it is implemented in non-popular framework JAX, and the pre-trained file can not be read by opencv.
 - (*integration side*) The position of model file should be managed dynamically by the repo.
 
 TODO:
 - (*research side*) Concatenate dataset and train on this dataset -> more generalized dataset better model 
-- (*research side*) Reseach on Musiq.
-- (*integration side*) Impelement UI of aesthetic detection and management of model file.
+- (*research side*) Research on Musiq.
+- (*integration side*) Implement UI of aesthetic detection and management of model file.
 
 ## Sixth week 25/07/2022 - 31/07/2025
 
-As explained in the resume of last week, we can improve the model be combining different dataset. The main idea is create a most generalized datset. These experiments help us evaluate better the performance of the architecture. 
+As explained in the resume of last week, we can improve the model be combining different dataset. The main idea is create a most generalized dataset. These experiments help us evaluate better the performance of the model's architecture. 
 
 
 [project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf

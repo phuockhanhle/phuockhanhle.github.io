@@ -140,6 +140,10 @@ TODO:
 - (*research side*) Reseach on Musiq.
 - (*integration side*) Impelement UI of aesthetic detection and management of model file.
 
+## Sixth week 25/07/2022 - 31/07/2025
+
+As explained in the resume of last week, we can improve the model be combining different dataset. The main idea is create a most generalized datset. These experiments help us evaluate better the performance of the architecture. 
+
 
 [project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf
 [iqs-digikam-repo]: https://github.com/phuockhanhle/iqs-digikam

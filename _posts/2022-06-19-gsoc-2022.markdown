@@ -8,7 +8,7 @@ categories: jekyll update
 The main idea of IQS in digiKam is to determine the quality of an image and convert it into a score. This score is based on four criteria which are factors sabotaging image: blur, noise, exposure, and compression. The current approach is useful to determine images distorted by one of these reasons. However, the current algorithm presents also some drawbacks : It demands a lots of fine tuning from user's side and it's cannot work on aesthetic image. So, I propose the solution of deep learning algorithm. While the dataset and the paper for aesthetic image quality assessment are free to use, we are capable of constructing a mathematical model that can learn the pattern of a dataset, hence, predict the score of quality. As deep learning is an end-to-end solution, it doesn’t require the setting for the hyperparameter. Hence, we can reduce most of the fine-tuning parts to make this feature easier to use
 
 Check out the [IQS Proposal][project-proposal] for more info about description and algorithm of the project.
-## First week 13/06/2022
+## First week 13/06/2022 - 19/06/2022
 
 As described in the proposal, the first week is dedicated for experimenting and reproducing the result of two target algorithm [NIMA][NIMA-repo] and [musiq][musiq-repo].
 
@@ -42,7 +42,7 @@ Achievement in first week :
 - Change metric that consider more weighted on result of different region score
 
 
-## Second week 20/06/2022
+## Second week 20/06/2022 - 26/06/2022
 
 As described in the last post, the current metric for regression (MSE) is not suitable for imbalanced data, hence, I consider a branch new metric :
 - As our use-case at the end is classification between 3 class : bad, normal and good image,hence, I split the data into 3 class with same meaning. As most of the images are in class normal, the data is still imbalanced, hence, I use [F1 score][F1_score] for evaluation.
@@ -96,7 +96,7 @@ This is the result after training and testing with different base model and hype
 
 **Solution** Using combined dataset could be a good solution. 
 
-## Sixth week 18/07/2022 - 24/07/2025
+## Sixth week 18/07/2022 - 24/07/2022
 
 As I would like to spend more time on research after the first evaluation, I changed a little in my plan. In this week, I realize the main classes of aesthetic detection and integrate to digiKam. As I have changed the architecture of the model in the last week, the aesthetic detection cli should be changed also. The main problem is to perform exactly the preprocessed image from python to c++.
 
@@ -140,7 +140,7 @@ TODO:
 - (*research side*) Research on Musiq.
 - (*integration side*) Implement UI of aesthetic detection and management of model file.
 
-## Sixth week 25/07/2022 - 31/07/2025
+## Sixth week 25/07/2022 - 31/07/2022
 
 As explained in the resume of last week, we can improve the model be combining different dataset. The main idea is to create a most generalized dataset. These experiments help us evaluate better the performance of the model's architecture. At first, we need to choose which dataset to be combined. AVA and EVA dataset is a good choice as all of their images are aesthetic image. On the other hand, the dataset Koniq10k contains the images with different levels of distortion. Although images with distortion are not necessary aesthetic, images which are too much distorted are absolutely bad image. Hence, I added bad images of Koniq10k to evaluation set. 
 
@@ -164,6 +164,10 @@ After experimenting and fine-tuning with the same process in the first phase, I 
 |Model trained on combined dataset |0.70             |0.64                         |
 
 **TODO** : In the next week, I would like to improve the model by changing the architecture inside, the main idea is using a smaller base model but more dense of fully connected at the end of the model
+
+
+## Sixth week 01/08/2022 - 07/08/2022
+
 
 
 

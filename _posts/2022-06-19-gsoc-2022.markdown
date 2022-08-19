@@ -167,4 +167,9 @@ After experimenting and fine-tuning with the same process in the first phase, I 
 **TODO**: In the next week, I would like to improve the model by changing the architecture inside. The main idea is to use a smaller base model but dense of fully connected at the end of the model.
 
 
-## Sixth week 01/08/2022 - 07/08/2022
+## Eighth week 01/08/2022 - 07/08/2022
+inceptionV3 + larger batch size + larger image size 
+## Ninth week 07/08/2022 - 14/08/2022
+CI + musiq
+## Eighth week 15/08/2022 - 21/08/2022
+SPAQ

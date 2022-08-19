@@ -111,28 +111,28 @@ Before implementing the core class of aesthetic detection, I did a small unit te
 **Figure4:** Bad image from IQS digiKam unit test
 
 After the unit test, I implement the aesthetic detector to pass the unit test. Fortunately, the architecture of the detector of image quality sorter is well defined. Hence, I implement only the main functions of aesthetic detection based on the aesthetic cli. There are only three main methods :
-- *Preprocessing*: The preprocessing process should be the same to what is done in python. The image is transformed from blue-green-red mode to red-green-blue mode, then resized to 22x224 with INTER_NEAREST_EXACT interpolation. At the end, the each pixel is normalized to -1 and 1.
-- *Serving model* : The model is loaded from a PB file. This is the model file of TensorFlow. Opencv dnn is developed well in this path.
-- *Postprocessing*: The output of a deep learning model is only a matrix with the score. Based on the meaning of the last layer, these scores have different meaning. In our case, the score is a matrix of 3 float number representing the probability that the image is belonged to each class.
+- *Preprocessing*: The preprocessing process should be the same to what is done in python. The image is transformed from blue-green-red mode to red-green-blue mode, then resized to 22x224 with INTER_NEAREST_EXACT interpolation. In the end, each pixel is normalized to -1 and 1.
+- *Serving model*: The model is loaded from a PB file. This is the model file of TensorFlow. Opencv dnn is developed well in this path.
+- *Postprocessing*: The output of a deep learning model is only a matrix with the score. Based on the meaning of the last layer, these scores have a different meanings. In our case, the score is a matrix of 3 float numbers representing the probability that the image belongs to each class.
 
-The implementation of aesthetic detection passes all unit test. However, we have the problem of the similarity between aesthetic cli and aesthetic detector. While they gives both same prediction of the class, the score is slightly different. The reason is the way they read the image from file. While the cli uses *imread* method from opencv to read the image, the detector uses loading image thread of digikam with size of 1024 x 1024. This could be cause the problem in the future.
+The implementation of aesthetic detection passes all unit tests. However, we have the problem of the similarity between aesthetic cli and aesthetic detector. While they give the exact class prediction, the score is slightly different. The reason is the way they read the image from the file. While the cli uses *imread* method from OpenCV to read the picture, the detector uses a loading image thread of digikam with the size of 1024 x 1024. This could cause the problem in the future.
 
-**Current problem** : The file model path should be dynamic to the repo of digikam. However, the file is too large and can not be handled by Github. For now, I hardcode the link of the model file. The model file can be downloaded from [here][Model-path]
+**Current problem**: The file model path should be dynamic to the repo of digikam. However, the file is too large and can not be handled by Github. For now, I hardcoded the link to the model file. The model file can be downloaded from [here][Model-path]
 
 ## First phase resume
 
-This part is dedicated to resume the achievements, problems, TODO list and idea in the first phase of GSOC22.
+This part is dedicated to resuming the achievements, problems, TODO list, and ideas in the first phase of GSOC22.
 Achievements:
 - (*research side*) Complete data pipeline for AVA and EVA dataset.
-- (*research side*) Analyze data to retrieve the main problem : imbalanced dataset -> most of image are labeled with score from 4 to 6 in scale of 10.
-- (*research side*) Train, test and, experiment [NIMA][NIMA-repo] on AVA and EVA dataset -> confirm the problem of imbalanced dataset.
-- (*research side*) Change the problem to 3-classes classification based on digikam context, re-implement data labeling and change the last layer of the model to adapt the new context. Achieve an acceptable result on AVA dataset evaluation set :  72.1% of true prediction.
-- (*integration side*) Implement aesthetic detection cli that can receive a model path and a image path, to get the score of quality of the image.
+- (*research side*) Analyze data to retrieve the main problem: an imbalanced dataset -> most images are labeled with a score from 4 to 6 on a scale of 10.
+- (*research side*) Train, test, and experiment [NIMA][NIMA-repo] on AVA and EVA dataset -> confirm the problem of an imbalanced dataset.
+- (*research side*) Change the problem to 3-classes classification based on digikam context, re-implement data labeling and change the last layer of the model to adapt to the new context. Achieve an acceptable result on the AVA dataset evaluation set:  72.1% of accurate prediction.
+- (*integration side*) Implement aesthetic detection cli that can receive a model path and an image path to get the image's quality score.
 - (*integration side*) Implement aesthetic detector classes in digikam code base and aesthetic unit test.
 
 Problem:
-- (*research side*) Labeling class image based on its score is too much objective. Hence, the model is easy to confuse between bad image and normal image, or normal image and good image.
-- (*research side*) MUSISQ is not yet well researched as it is implemented in non-popular framework JAX, and OpenCV can not read the pre-trained file.
+- (*research side*) Labeling class images based on their score is too objective. Hence, the model easily confuses between bad and average photos or average and good images.
+- (*research side*) MUSISQ is not yet well researched as it is implemented in the non-popular framework JAX, and OpenCV can not read the pre-trained file.
 - (*integration side*) The position of the model file should be managed dynamically by the repo.
 
 TODO:
@@ -164,24 +164,7 @@ After experimenting and fine-tuning with the same process in the first phase, I 
 |Model trained on AVA dataset      |0.721            |0.542                        |
 |Model trained on combined dataset |0.70             |0.64                         |
 
-**TODO**: In the next week, I would like to improve the model by changing the architecture inside. The main idea is to use a smaller base model but dense of fully connected at the end of the model
+**TODO**: In the next week, I would like to improve the model by changing the architecture inside. The main idea is to use a smaller base model but dense of fully connected at the end of the model.
 
 
 ## Sixth week 01/08/2022 - 07/08/2022
-
-
-
-
-[project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf
-[iqs-digikam-repo]: https://github.com/phuockhanhle/iqs-digikam
-[NIMA-repo]: https://github.com/idealo/image-quality-assessment
-[musiq-repo]: https://github.com/google-research/google-research/tree/master/musiq
-[SRCC]: https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient
-[F1_score]: https://medium.com/synthesio-engineering/precision-accuracy-and-f1-score-for-multi-label-classification-34ac6bdfb404
-[SPAQ]: https://github.com/h4nwei/SPAQ
-[freeze-model]: https://blog.metaflow.fr/tensorflow-how-to-freeze-a-model-and-serve-it-with-a-python-api-d4f3596b3adc
-[inference-c++]: https://github.com/phuockhanhle/iqs-digikam/blob/inference_cpp/inference/inference_iqs/inference_iqs.cpp
-[softmax]: https://en.wikipedia.org/wiki/Softmax_function
-[InceptionResNetV2]: https://keras.io/api/applications/inceptionresnetv2/
-[Model-path]: https://drive.google.com/file/d/1c4uVuyLp_eqE1vLCEVgU0LXv1ik5YgA1/view?usp=sharing
-[AVA-pred-file]: https://raw.githubusercontent.com/phuockhanhle/iqs-digikam/main/data/AVA_dataset/NIMA_config/pred.json

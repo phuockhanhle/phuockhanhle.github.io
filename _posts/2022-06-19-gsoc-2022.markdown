@@ -1,31 +1,31 @@
 ---
 layout: post
-title:  "Google Summer of Code 2022 : DigiKam Image Quality Sorter Algorithms Improvement"
+title: "Google Summer of Code 2022: DigiKam Image Quality Sorter Algorithms Improvement"
 date:   2022-06-19 16:41:53 +0200
 categories: jekyll update
 ---
 ## Project description
-The main idea of IQS in digiKam is to determine the quality of an image and convert it into a score. This score is based on four criteria which are factors sabotaging image: blur, noise, exposure, and compression. The current approach is useful to determine images distorted by one of these reasons. However, the current algorithm presents also some drawbacks : It demands a lots of fine tuning from user's side and it's cannot work on aesthetic image. So, I propose the solution of deep learning algorithm. While the dataset and the paper for aesthetic image quality assessment are free to use, we are capable of constructing a mathematical model that can learn the pattern of a dataset, hence, predict the score of quality. As deep learning is an end-to-end solution, it doesn’t require the setting for the hyperparameter. Hence, we can reduce most of the fine-tuning parts to make this feature easier to use
+The main idea of IQS in digiKam is to determine the quality of an image and convert it into a score. This score is based on four factors sabotaging image: blur, noise, exposure, and compression. The current approach helps determine whether images are distorted for one of these reasons. However, the current algorithm also presents some drawbacks: It demands lots of fine-tuning from the user's side and cannot work on the aesthetic image. So, I propose the solution of the deep learning algorithm. While the dataset and the paper for aesthetic image quality assessment are free to use, we are capable of constructing a mathematical model that can learn the pattern of a dataset, hence, predicting the score of quality. As deep learning is an end-to-end solution, it doesn't require the setting for the hyperparameter. Therefore, we can reduce most of the fine-tuning parts to make this feature easier to use
 
-Check out the [IQS Proposal][project-proposal] for more info about description and algorithm of the project.
+Check out the [IQS Proposal][project-proposal] for more info about the description and algorithm of the project.
 ## First week 13/06/2022 - 19/06/2022
 
-As described in the proposal, the first week is dedicated for experimenting and reproducing the result of two target algorithm [NIMA][NIMA-repo] and [musiq][musiq-repo].
+As described in the proposal, the first week is dedicated to experimenting and reproducing the result of two target algorithms [NIMA][NIMA-repo] and [musiq][musiq-repo].
 
-My purpose is testing and training the deep learning model following the algorithms. Hence, only the code needed for these tasks is extracted from their repos. All is published in my own repose [iqs digikam][iqs-digikam-repo].
+I aim to test and train the deep learning model following the algorithms. Hence, only the code needed for these tasks is extracted from their repos. All is published in my own repose [iqs digikam][iqs-digikam-repo].
 
 These are my principal task in my first week : 
 - Install environment for running python code of NIMA and musiq.
-- Download dataset of EVA and AVA dataset.
+- Download dataset of EVA and AVA datasets.
 - Write training and testing script for NIMA.
 - Adapt the label of 2 datasets for the context of NIMA.
 
-Achievement in first week :
-- For now, using python, I can train, evaluate and predict on each image.
-- Using the pre-trained model of the paper achieves a good performance : MSE = 0.3107 (means the variance is 3.1 on the scale score of IQS digiKam)
+Achievement in the first week :
+- For now, I can train, evaluate and predict each image using python.
+- Using the pre-trained model of the paper achieves a good performance: MSE = 0.3107 (means the variance is 3.1 on the scale score of IQS digiKam)
 
 **Current problem**:
-- Most of images are labeled with score around of 5. This is reasonable as if then annotator can not be sure about the quality of the image, they will give the score of 4, 5 or 6. It makes the problem of evaluation the model. The metric MSE will show that it is a good model even when the model will predict all the image with score of 5. These 2 images shows the distribution of the score on 2 datasets : AVA and EVA:
+- Most images are labeled with a score of around 5. This is reasonable as if the annotator can not be sure about the quality of the image, they will give a score of 4, 5, or 6. It creates the problem of evaluating the model. The metric MSE will show that it is a good model even when the model will predict all the images with a score of 5. These two images show the distribution of the score on 2 datasets: AVA and EVA:
 
 ![AVA analyses](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/ava_analyse.png?raw=true)
 
@@ -37,87 +37,87 @@ Achievement in first week :
 **Figure2** : distribution of score of EVA dataset
 
 
-**Ideal to resolve :**
-- Augment data of different range / reduce data of concentrated range in order to have balance dataset
-- Change metric that consider more weighted on result of different region score
+**Ideal to resolve:**
+- Augment data of different ranges / reduce data of concentrated range to have a balance dataset
+- Change metric that considers more weighted on the result of different region score
 
 
 ## Second week 20/06/2022 - 26/06/2022
 
-As described in the last post, the current metric for regression (MSE) is not suitable for imbalanced data, hence, I consider a branch new metric :
-- As our use-case at the end is classification between 3 class : bad, normal and good image,hence, I split the data into 3 class with same meaning. As most of the images are in class normal, the data is still imbalanced, hence, I use [F1 score][F1_score] for evaluation.
-- [Spearman's rank correlation coefficient][SRCC] is a metric to evaluate the similarity between 2 distribution. Hence, the more similar between prediction and reference, the better the performance of the model
+As described in the last post, the current metric for regression (MSE) is not suitable for imbalanced data. Hence, I consider a branch new metric :
+- As our use-case at the end is the classification between 3 classes: bad, average, and good image, hence, I split the data into three classes with the same meaning. As most of the images are in class normal, the data is still imbalanced. Hence, I use [F1 score][F1_score] for evaluation.
+- [Spearman's rank correlation coefficient][SRCC] is a metric to evaluate the similarity between 2 distributions. Hence, the more similar between prediction and reference, the better the performance of the model
 
-After having these 2 metrics, I re-evaluate the function model of NIMA: The checkpoint given by the paper still achieves the best performance : 0.589 on F1 score for class of digiKam
+After having these two metrics, I re-evaluate the function model of NIMA: The checkpoint given by the paper still achieves the best performance: 0.589 on the F1 score for the class of digiKam.
 
-As I explained in last week, we need a balance dataset that the score is evenly distributed. I made research on new dataset for image quality assessment:
-- [SPAQ][SPAQ] dataset is a dataset for image quality assessment which evaluates each image by a score from 0 to 100.
+As I explained last week, we need a balanced dataset that the score is evenly distributed. I did research on a new dataset for image quality assessment:
+- [SPAQ][SPAQ] dataset is a dataset for image quality assessment that evaluates each image by a score from 0 to 100.
 
-For the sake of achieving the performance of the paper without using the checkout proposed by the image, I fine-tune the model for various situation:
-- Fine-tuning on number of epochs : number of training-dense epochs and number of full training model. The best combination is 3 epochs for dense training and 7 epochs for full model training.
-- Testing on variant of base model : MobileNet, InceptionV2, InceptionV3, VGG16. The model using VGG16 showed the best precision.
+For the sake of achieving the performance of the paper without using the checkout proposed by the image, I fine-tune the model for various situations:
+- Fine-tuning on number of epochs: number of training-dense epochs and number of full training models. The best combination is three epochs for dense training and seven for full model training.
+- Testing on base model variant: MobileNet, InceptionV2, InceptionV3, VGG16. The model using VGG16 showed the best precision.
 - However, I did not yet archive the performance as the paper.
 
 **Upcoming task:**
 - Combining various datasets could create a balanced dataset.
-- Training on combined dataset
+- Training on the combined dataset
 - Training from the pre-trained weight of the paper.
 
 ## Third week 27/06/2022
 
-Although the research wasn't finished yet, we can already use the pre-trained model published by NIMA with an acceptable performance. Hence, following the timeline in my proposal, the next step would be using the model in C++.
+Although the research wasn't finished, we can already use the pre-trained model published by NIMA with acceptable performance. Hence, following the timeline in my proposal, the next step would be using the model in C++.
 
-Before integrating in digiKam's repo, I tried to compile a small C++ with opencv. Then, using module DNN of opencv to read the image, read the pre-trained model, and calculate the score of the image. To do that, there are some step to do:
-- In Python side, the pre-trained model file must be [freeze the weight][freeze-model], this is a specific technique so the model file could be read by opencv
-- On C++ side, having opencv from 4.5.5 is a requirement.
-- At last, we only need to read model from file, read image, and calculate the output of the model. This is a small example of [inference][inference-c++]
+Before integrating into digiKam's repo, I tried to compile a small C++ with OpenCV. Then, using module DNN of OpenCV to read the image, read the pre-trained model, and calculate the score of the image. To do that, there are some steps to do:
+- On the Python side, the pre-trained model file must be [freeze the weight][freeze-model]. This is a specific technique so the model file could be read by OpenCV
+- On the C++ side, having OpenCV from 4.5.5 is a requirement.
+- At last, we only need to read the model from the file, read the image, and calculate the model's output. This is a small example of [inference][inference-c++]
 
 ## Fourth and Fifth week 04/07/2022 - 17/07/2022
 
-As mentioned in the second week, I change the metric to consider the problem as classification with 3 classes. However, changing the metric doesn't help us to improve the performance of the model. Because the model still trains with the loss function of regression problem. Secondly, training data is still imbalanced as their score is always around 5. The work of these two weeks is to resolve the problem of imbalanced dataset. I have come to a reasonable solution for digiKam. 
+As mentioned in the second week, I changed the metric to consider the problem as classification with three classes. However, changing the metric doesn't help us improve the model's performance. Because the model still trains with the loss function of the regression problem. Secondly, training data is still imbalanced as their score is always around 5. The work of these two weeks is to resolve the imbalanced dataset problem. I have come to a reasonable solution for digiKam. 
 
-In fact, at the end, we would like to have a label of bad, normal or good for an image. So this is a classification problem. That 's why I realize these steps :
-- Re-label the dataset by only 3 class, I separate class by it quality score. 
-- In order to have a balance dataset, I use only 9000 images for each class, as most of the images are in normal dataset. 
-- Change the last layer of the model to dense of softmax. This is a layer using [softmax][softmax] activation function. Hence, the result is percentage of an image belonged to each class.
+In fact, in the end, we would like to have a label of bad, normal, or good for an image. So this is a classification problem. That's why I realize these steps :
+- Re-label the dataset by only three classes. I separate classes by it a quality score. 
+- To have a balanced dataset, I use only 9000 images for each class, as most of the images are in a normal dataset. 
+- Change the last layer of the model to dense softmax. This is a layer using [softmax][softmax] activation function. Hence, the result is the percentage of an image belonging to each class.
 - Change the lost function applied to train the model, from earth movers distance to categorical entropy.
-- Change also the metric to evaluate the model : the first one is the percentage of true prediction on evaluation set, hence the second one is f1 score on each dataset. While the first matrix is more natural to human's understanding, the second represent the capacity of the model to recognize on each class.
+- Change also the metric to evaluate the model: the first is the percentage of true prediction on the evaluation set; the second is the f1 score on each dataset. While the first matrix is more natural to human understanding, the second represents the model's capacity to recognize each class.
 
-After experimenting, the model shows expected result. To evaluate the model, I use the evaluation set of AVA after labeling with classification. There are *14.702* images with *3.626* images from class 2 ( good images), *6.862* images from class 1 ( normal images), *4.214* images from class 1 ( bad images) The percentage of true prediction is *0.721*. F1 score is *0.764 0.674 0.741* on each class. This [file][AVA-pred-file] shows the label and the prediction of each image of AVA dataset.
+After experimenting, the model shows the expected result. I use the evaluation set of AVA after labeling with classification to evaluate the model. There are *14.702* images with *3.626* images from class 2 ( good images), *6.862* images from class 1 ( normal images), *4.214* images from class 1 ( bad images). The percentage of true prediction is *0.721*. F1 score is *0.764 0.674 0.741* on each class. This [file][AVA-pred-file] shows the label and the prediction of each image of the AVA dataset.
 
-This is the result after training and testing with different base model and hyperparameter. I conclude to this configuration : 
+These results after training and testing with different base model and hyperparameter. I conclude to this configuration : 
 - Base model : [InceptionResNetV2][InceptionResNetV2]
 - Batch size : 16
 - Learning rate : 0.0005
 - Number epochs : 8
 - dropout rate : 0.75
 
-**Main current problem** : As the purpose is to have a balanced data, I choose the threshold is 5 and 6, it means if the score <= 5, the image is labeled as 0, 5 < score <= 6 is for normal, and the rest is for good image. This is too much objective, so the images that are labeled 0 is not really bad, or the images are labeled 2 is not really too well, it gives the confusion for model.
+**Main current problem** : As the purpose is to have balanced data, I choose the threshold as 5 and 6, which means if the score <= 5, the image is labeled as 0, 5 < score <= 6 is for average, and the rest is for a good image. This is too objective, so the images labeled 0 are not bad, or the images labeled two are not too well, which confuses the model.
 
-**Solution** Using combined dataset could be a good solution. 
+**solutionSolution** Using a combined dataset could be a good solution. 
 
 ## Sixth week 18/07/2022 - 24/07/2022
 
-As I would like to spend more time on research after the first evaluation, I changed a little in my plan. In this week, I realize the main classes of aesthetic detection and integrate to digiKam. As I have changed the architecture of the model in the last week, the aesthetic detection cli should be changed also. The main problem is to perform exactly the preprocessed image from python to c++.
+As I would like to spend more time on research after the first evaluation, I changed a little in my plan. This week, I realized the main classes of aesthetic detection and integrated into digiKam. As I have changed the model's architecture in the last week, the aesthetic detection cli should also be changed. The main problem is performing the preprocessed image from python to c++.
 
-Before implementing the core class of aesthetic detection, I did a small unittest. I get 3 images which are classified as good image in AVA dataset, and 3 images of bad quality that are already in data of image quality sort.
+Before implementing the core class of aesthetic detection, I did a small unit test. I get three images that are classified as a good image in the AVA dataset and three images of bad quality that are already in the data of image quality sort.
 
 ![Good-image-for-unit-test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/aesthetic_1.jpg?raw=true)
 
-**Figure3:** Aesthetic image from AVA dataset
+**Figure3:** Aesthetic image from the AVA dataset
 
 ![Bad image for unit test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/general_bad_image_1.jpg?raw=true)
 
 **Figure4:** Bad image from IQS digiKam unit test
 
-After having the unit test, I implement the aesthetic detector in order to pass the unit test. Fortunately, the architecture of detector of image quality sorter is well defined. Hence, I implement only the main functions of aesthetic detection based on the aesthetic cli. There are only 3 main methods :
-- *Preprocessing* : The preprocessing process should be exactly the same to what is done in python. The image is transformed from blue-green-red mode to red-green-blue mode, then resized to 22x224 with INTER_NEAREST_EXACT interpolation. At the end, the eah pixel is normalize to -1 and 1.
-- *Serving model* : The model is loaded from a pb file. This is the model file of tensorflow. Opencv dnn is developed well in this path.
-- *Postprocessing*: The output of a deep learning model is only a matrix with score. Based on the meaning of the last layer, these scores have different meaning. In our case, the score is a matrix of 3 float number representing the probability that the image is belonged to each class.
+After the unit test, I implement the aesthetic detector to pass the unit test. Fortunately, the architecture of the detector of image quality sorter is well defined. Hence, I implement only the main functions of aesthetic detection based on the aesthetic cli. There are only three main methods :
+- *Preprocessing*: The preprocessing process should be the same to what is done in python. The image is transformed from blue-green-red mode to red-green-blue mode, then resized to 22x224 with INTER_NEAREST_EXACT interpolation. At the end, the each pixel is normalized to -1 and 1.
+- *Serving model* : The model is loaded from a PB file. This is the model file of TensorFlow. Opencv dnn is developed well in this path.
+- *Postprocessing*: The output of a deep learning model is only a matrix with the score. Based on the meaning of the last layer, these scores have different meaning. In our case, the score is a matrix of 3 float number representing the probability that the image is belonged to each class.
 
 The implementation of aesthetic detection passes all unit test. However, we have the problem of the similarity between aesthetic cli and aesthetic detector. While they gives both same prediction of the class, the score is slightly different. The reason is the way they read the image from file. While the cli uses *imread* method from opencv to read the image, the detector uses loading image thread of digikam with size of 1024 x 1024. This could be cause the problem in the future.
 
-**Current problem** : The file model path should be dynamic to the repo of digikam. However, the file is too large and can not be handled by github. For now, I hardcode the link of the model file. The model file can be downloaded from [here][Model-path]
+**Current problem** : The file model path should be dynamic to the repo of digikam. However, the file is too large and can not be handled by Github. For now, I hardcode the link of the model file. The model file can be downloaded from [here][Model-path]
 
 ## First phase resume
 
@@ -132,38 +132,39 @@ Achievements:
 
 Problem:
 - (*research side*) Labeling class image based on its score is too much objective. Hence, the model is easy to confuse between bad image and normal image, or normal image and good image.
-- (*research side*) MUSISQ is not yet well researched as it is implemented in non-popular framework JAX, and the pre-trained file can not be read by opencv.
-- (*integration side*) The position of model file should be managed dynamically by the repo.
+- (*research side*) MUSISQ is not yet well researched as it is implemented in non-popular framework JAX, and OpenCV can not read the pre-trained file.
+- (*integration side*) The position of the model file should be managed dynamically by the repo.
 
 TODO:
 - (*research side*) Concatenate dataset and train on this dataset -> more generalized dataset better model 
 - (*research side*) Research on Musiq.
 - (*integration side*) Implement UI of aesthetic detection and management of model file.
 
-## Sixth week 25/07/2022 - 31/07/2022
+## Seventh week 25/07/2022 - 31/07/2022
 
-As explained in the resume of last week, we can improve the model be combining different dataset. The main idea is to create a most generalized dataset. These experiments help us evaluate better the performance of the model's architecture. At first, we need to choose which dataset to be combined. AVA and EVA dataset is a good choice as all of their images are aesthetic image. On the other hand, the dataset Koniq10k contains the images with different levels of distortion. Although images with distortion are not necessary aesthetic, images which are too much distorted are absolutely bad image. Hence, I added bad images of Koniq10k to evaluation set. 
+As explained in the resume of last week, we can improve the model by combining different datasets. The main idea is to create a most generalized dataset. These experiments help us evaluate better the performance of the model's architecture. At first, we need to choose which dataset to be combined. AVA and EVA dataset is a good choice as all of their images are aesthetic.
+On the other hand, the dataset Koniq10k contains images with different levels of distortion. Although images with distortion are not necessarily aesthetic, images that are too distorted are terrible. Hence, I added bad photos of Koniq10k to the evaluation set. 
 
-These are some hyper-parameters to combined dataset:
+These are some hyper-parameters for the combined dataset:
 - Dataset AVA : bad images ( score <= 5); normal images ( score <= 6); good images ( score > 6)
 - Dataset EVA : bad images ( score <= 5); normal images ( score <= 7); good images ( score > 7)
-- Dataset Koniq10k : get only bad image with score < 40.
+- Dataset Koniq10k: get only bad image with a score < 40.
 
-After having evaluation set, I re-evaluated the model that was produced in the first phase. As expected, I observed a big loss of the accuracy on combined evaluation set. By the same way of concatenating datasets, I created the combined dataset for training. These are some portion of each class in evaluation set and training set :
+After having the evaluation set, I re-evaluated the model that was produced in the first phase. As expected, I observed a significant loss of accuracy on the combined evaluation set. In the same way as concatenating datasets, I created the combined dataset for training. These are some portions of each class in the evaluation set and training set :
 
-| Data set       | % of bad image | % of normal image | % of good image |
+| Data set       | % of bad image | % of standard image | % of good image |
 |----------------|----------------|-------------------|-----------------|
 | Evaluation set |27.56%          |44.99%             |27.50%           |
 | Training set   |0               |0                  |0                |
 
-After experimenting and fine-tuning with the same process in the first phase, I achieved an good improvement 
+After experimenting and fine-tuning with the same process in the first phase, I achieved a good improvement 
 
 |The model                          | Accuracy on AVA | Accuracy on combined dataset|
 |----------------------------------|-----------------|-----------------------------|
 |Model trained on AVA dataset      |0.721            |0.542                        |
 |Model trained on combined dataset |0.70             |0.64                         |
 
-**TODO** : In the next week, I would like to improve the model by changing the architecture inside, the main idea is using a smaller base model but more dense of fully connected at the end of the model
+**TODO**: In the next week, I would like to improve the model by changing the architecture inside. The main idea is to use a smaller base model but dense of fully connected at the end of the model
 
 
 ## Sixth week 01/08/2022 - 07/08/2022

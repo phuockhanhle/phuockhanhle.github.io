@@ -168,8 +168,35 @@ After experimenting and fine-tuning with the same process in the first phase, I 
 
 
 ## Eighth week 01/08/2022 - 07/08/2022
-inceptionV3 + larger batch size + larger image size 
+In this week, I would like to optimize the performance of the model in 2 directions : inference time and accuracy. To optimize accuracy, I perform some experiments including : increase the batch size of training, increase the size of image for training, and insert a fully-connected after the last layers of the model.
+
+As I used the InceptionNet as the base model, there are always a layer of batch normalization. This layer need a large batch size to achieve the generalization because the distribution of the batch will be closer to the real population. From batch size 16, I experiment with batch size 32 and 64. The following figure shows the improvement.
+
+![performance batch size](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/performance_batchsize.png?raw=true)
+
+**Figure5** : Improvement by increasing batch size
+
+
+Secondly, I increase the image size at the input of the model. There are two reasons. At first, we can extract more information in bigger image. Hence, in theory, the model can be more accurate. However, we can not use too large image because as it would  be a huge burden on Ram. Secondly, the origin design of InceptionNet receive the image with size 299x299. Actually, we use the input size as 224x224 as we want to use the pre-trained weights of ImageNet. The following figure shows the improvement of increasing image size. However, I can not use whatever the image size because of the limitation of my computational resource. A vary large image size make me to decrease the batch size, hence, we loose the benefit of the last idea.
+
+![performance image size](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/performance_iamge_size.png?raw=true)
+
+**Figure6** : Improvement by increasing image size
+
+In the other hand, I would like to minimize the inference time. It is important to calculate faster in digiKam. Hence, I replace the base model InceptionResNetV2 by InceptionV3. I decrease the number of parameter from 55.9M to 23.9M. This change reduces also the accuracy of the model. Hence, I inserted a fully-connected dense before the last layer. I calculate also the inference time on one image using CPU. The following table indicates the difference model I used.
+
+|The model                           | Accuracy on combined dataset|
+|------------------------------------|-----------------------------|
+|Base model : InceptionResNetV2      |0.764                        |
+|Base model : InceptionV3            |0.752                        |
+|Base model : InceptionV3 + Dense FC |0.783                        |
+
 ## Ninth week 07/08/2022 - 14/08/2022
-CI + musiq
+The main task of this week is implementation the user interface (UI) for aesthetic image detector. When using this feature, the user doesn't need to config different parameter.  Hence, this interface of configuration is likely the next figure.
+
+
+After testing the feature on digikam, I observe that the calculation is quite slow. The reason is that for each image, the model will be loaded from the file to Ram. We can optimize this process by loading the model only one time at the beginning of the feature.
+
+
 ## Eighth week 15/08/2022 - 21/08/2022
 SPAQ

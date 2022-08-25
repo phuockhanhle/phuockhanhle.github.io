@@ -155,7 +155,7 @@ After having the evaluation set, I re-evaluated the model that was produced in t
 | Data set       | % of bad image | % of standard image | % of good image |
 |----------------|----------------|-------------------|-----------------|
 | Evaluation set |27.56%          |44.99%             |27.50%           |
-| Training set   |0               |0                  |0                |
+| Training set   |29,65%          |35.48%             |34.87%           |
 
 After experimenting and fine-tuning with the same process in the first phase, I achieved a good improvement 
 

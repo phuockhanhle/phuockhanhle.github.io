@@ -197,9 +197,24 @@ The main task of this week is implementation the user interface (UI) for aesthet
 
 After testing the feature on digikam, I observe that the calculation is quite slow. The reason is that for each image, the model will be loaded from the file to Ram. We can optimize this process by loading the model only one time at the beginning of the feature.
 
+In this week, I made also a research on Vision transformer(Vit) which is the main idea behind the algorithm [musiq][musiq-repo]. The Vision Transformer, or ViT, is a model for image classification that employs a Transformer-like architecture over patches of the image. An image is split into fixed-size patches, each of them are then linearly embedded, position embeddings are added, and the resulting sequence of vectors is fed to a standard Transformer encoder. In order to perform classification, the standard approach of adding an extra learnable “classification token” to the sequence is used. 
 
-## Eighth week 15/08/2022 - 21/08/2022
-SPAQ
+The motivation of this approach is to find the relation between different part of image, then, find the important region of image that effect most on the quality. This is in fact the used case of aesthetic image. For example, image with blurred background have only a part that is sharped. Hence, this part is the most important to classify the quality of the image.
+
+The algorithm [musiq][musiq-repo] uses the same idea. However, I do not use directly the code of musiq because of 2 reasons. At first, the model is coded in the new framework [JAX][JAX]. This is the new framework of google for implementing deep learning model. However, it is unstable. It poses a lots of bugs and unexpected error to reproduce the result. Secondly, the model file from JAX is not supported yet by the library DNN of opencv. So, using directly their code can not conclude a model for digiKam. The structure of musiq is much large. Hence, I implement only the main idea : Vision transformer.
+
+The architecture of my model is presented in the following figure.
+
+The result is quite disappointed. Although the model is smaller than NIMA, the complexity is too high. The complexity of the Transformer is quadratic (O(n^2 × d)) with n is the number of patch and d is the complexity to process on a patch. In our case, with n is 16 (image is separated by 4 rows and 4 columns), the calculation is 128 times bigger than calculation for a patch. For each path, their is a correspondent residual net. The consequence of high complexity is the slowness in training and evaluation. In further, because of the limitation of my GPU, I can not train the model with a high batch size. Hence, the result is not impressive. 
+
+|The model                           | Accuracy on combined dataset|
+|------------------------------------|-----------------------------|
+|InceptionV3 + Dense FC |0.783                        |
+|InceptionV3 + Dense FC |0.547                        |
+
+
+## Tenth week 15/08/2022 - 21/08/2022
+In this week, I focus on realizing the model. In the experiment of seventh week, I have 2 observations. At first
 
 
 [project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf
@@ -215,3 +230,4 @@ SPAQ
 [InceptionResNetV2]: https://keras.io/api/applications/inceptionresnetv2/
 [Model-path]: https://drive.google.com/file/d/1c4uVuyLp_eqE1vLCEVgU0LXv1ik5YgA1/view?usp=sharing
 [AVA-pred-file]: https://raw.githubusercontent.com/phuockhanhle/iqs-digikam/main/data/AVA_dataset/NIMA_config/pred.json
+[JAX]: https://github.com/google/jax

@@ -25,7 +25,7 @@ Achievement in the first week :
 - Using the pre-trained model of the paper achieves a good performance: MSE = 0.3107 (means the variance is 3.1 on the scale score of IQS digiKam)
 
 **Current problem**:
-- Most images are labeled with a score of around 5. This is reasonable as if the annotator can not be sure about the quality of the image, they will give a score of 4, 5, or 6. It creates the problem of evaluating the model. The metric MSE will show that it is a good model even when the model will predict all the images with a score of 5. These two images show the distribution of the score on 2 datasets: AVA and EVA:
+- Most images are labeled with a score of around 5. This is reasonable as if the annotator can not be sure about the quality of the image, they will give a score of 4, 5, or 6. It creates the problem of evaluating the model. The metric MSE will show that it is a accepted model even when the model will predict all the images with a score of 5. These two images show the distribution of the score on 2 datasets: AVA and EVA:
 
 ![AVA analyses](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/ava_analyse.png?raw=true)
 
@@ -45,7 +45,7 @@ Achievement in the first week :
 ## Second week 20/06/2022 - 26/06/2022
 
 As described in the last post, the current metric for regression (MSE) is not suitable for imbalanced data. Hence, I consider a branch new metric :
-- As our use-case at the end is the classification between 3 classes: bad, average, and good image, hence, I split the data into three classes with the same meaning. As most of the images are in class normal, the data is still imbalanced. Hence, I use [F1 score][F1_score] for evaluation.
+- As our use-case at the end is the classification between 3 classes: rejected, pending, and accepted image, hence, I split the data into three classes with the same meaning. As most of the images are in class pending, the data is still imbalanced. Hence, I use [F1 score][F1_score] for evaluation.
 - [Spearman's rank correlation coefficient][SRCC] is a metric to evaluate the similarity between 2 distributions. Hence, the more similar between prediction and reference, the better the performance of the model
 
 After having these two metrics, I re-evaluate the function model of NIMA: The checkpoint given by the paper still achieves the best performance: 0.589 on the F1 score for the class of digiKam.
@@ -76,14 +76,14 @@ Before integrating into digiKam's repo, I tried to compile a small C++ with Open
 
 As mentioned in the second week, I changed the metric to consider the problem as classification with three classes. However, changing the metric doesn't help us improve the model's performance. Because the model still trains with the loss function of the regression problem. Secondly, training data is still imbalanced as their score is always around 5. The work of these two weeks is to resolve the imbalanced dataset problem. I have come to a reasonable solution for digiKam. 
 
-In fact, in the end, we would like to have a label of bad, normal, or good for an image. So this is a classification problem. That's why I realize these steps :
+In fact, in the end, we would like to have a label of rejected, pending, or accepted for an image. So this is a classification problem. That's why I realize these steps :
 - Re-label the dataset by only three classes. I separate classes by it a quality score. 
-- To have a balanced dataset, I use only 9000 images for each class, as most of the images are in a normal dataset. 
+- To have a balanced dataset, I use only 9000 images for each class, as most of the images are in a pending dataset. 
 - Change the last layer of the model to dense softmax. This is a layer using [softmax][softmax] activation function. Hence, the result is the percentage of an image belonging to each class.
 - Change the lost function applied to train the model, from earth movers distance to categorical entropy.
 - Change also the metric to evaluate the model: the first is the percentage of true prediction on the evaluation set; the second is the f1 score on each dataset. While the first matrix is more natural to human understanding, the second represents the model's capacity to recognize each class.
 
-After experimenting, the model shows the expected result. I use the evaluation set of AVA after labeling with classification to evaluate the model. There are *14.702* images with *3.626* images from class 2 ( good images), *6.862* images from class 1 ( normal images), *4.214* images from class 1 ( bad images). The percentage of true prediction is *0.721*. F1 score is *0.764 0.674 0.741* on each class. This [file][AVA-pred-file] shows the label and the prediction of each image of the AVA dataset.
+After experimenting, the model shows the expected result. I use the evaluation set of AVA after labeling with classification to evaluate the model. There are *14.702* images with *3.626* images from class 2 ( accepted images), *6.862* images from class 1 ( pending images), *4.214* images from class 1 ( rejected images). The percentage of true prediction is *0.721*. F1 score is *0.764 0.674 0.741* on each class. This [file][AVA-pred-file] shows the label and the prediction of each image of the AVA dataset.
 
 These results after training and testing with different base model and hyperparameter. I conclude to this configuration : 
 - Base model : [InceptionResNetV2][InceptionResNetV2]
@@ -92,7 +92,7 @@ These results after training and testing with different base model and hyperpara
 - Number epochs : 8
 - dropout rate : 0.75
 
-**Main current problem** : As the purpose is to have balanced data, I choose the threshold as 5 and 6, which means if the score <= 5, the image is labeled as 0, 5 < score <= 6 is for average, and the rest is for a good image. This is too objective, so the images labeled 0 are not bad, or the images labeled two are not too well, which confuses the model.
+**Main current problem** : As the purpose is to have balanced data, I choose the threshold as 5 and 6, which means if the score <= 5, the image is labeled as rejected, 5 < score <= 6 is for pending, and the rest is for a accepted image. This is too objective, so the images labeled 0 are not really bad, or the images labeled two are not too well, which confuses the model.
 
 **solutionSolution** Using a combined dataset could be a good solution. 
 
@@ -100,15 +100,15 @@ These results after training and testing with different base model and hyperpara
 
 As I would like to spend more time on research after the first evaluation, I changed a little in my plan. This week, I realized the main classes of aesthetic detection and integrated into digiKam. As I have changed the model's architecture in the last week, the aesthetic detection cli should also be changed. The main problem is performing the preprocessed image from python to c++.
 
-Before implementing the core class of aesthetic detection, I did a small unit test. I get three images that are classified as a good image in the AVA dataset and three images of bad quality that are already in the data of image quality sort.
+Before implementing the core class of aesthetic detection, I did a small unit test. I get three images that are classified as a accepted image in the AVA dataset and three images of rejected quality that are already in the data of image quality sort.
 
-![Good-image-for-unit-test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/aesthetic_1.jpg?raw=true)
+![accepted-image-for-unit-test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/aesthetic_1.jpg?raw=true)
 
 **Figure3:** Aesthetic image from the AVA dataset
 
-![Bad image for unit test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/general_bad_image_1.jpg?raw=true)
+![Rejected image for unit test](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/general_bad_image_1.jpg?raw=true)
 
-**Figure4:** Bad image from IQS digiKam unit test
+**Figure4:** Rejected image from IQS digiKam unit test
 
 After the unit test, I implement the aesthetic detector to pass the unit test. Fortunately, the architecture of the detector of image quality sorter is well defined. Hence, I implement only the main functions of aesthetic detection based on the aesthetic cli. There are only three main methods :
 - *Preprocessing*: The preprocessing process should be the same to what is done in python. The image is transformed from blue-green-red mode to red-green-blue mode, then resized to 22x224 with INTER_NEAREST_EXACT interpolation. In the end, each pixel is normalized to -1 and 1.
@@ -131,7 +131,7 @@ Achievements:
 - (*integration side*) Implement aesthetic detector classes in digikam code base and aesthetic unit test.
 
 Problem:
-- (*research side*) Labeling class images based on their score is too objective. Hence, the model easily confuses between bad and average photos or average and good images.
+- (*research side*) Labeling class images based on their score is too objective. Hence, the model easily confuses between rejected and pending photos or pending and accepted images.
 - (*research side*) MUSISQ is not yet well researched as it is implemented in the non-popular framework JAX, and OpenCV can not read the pre-trained file.
 - (*integration side*) The position of the model file should be managed dynamically by the repo.
 
@@ -142,22 +142,21 @@ TODO:
 
 ## Seventh week 25/07/2022 - 31/07/2022
 
-As explained in the resume of last week, we can improve the model by combining different datasets. The main idea is to create a most generalized dataset. These experiments help us evaluate better the performance of the model's architecture. At first, we need to choose which dataset to be combined. AVA and EVA dataset is a good choice as all of their images are aesthetic.
-On the other hand, the dataset Koniq10k contains images with different levels of distortion. Although images with distortion are not necessarily aesthetic, images that are too distorted are terrible. Hence, I added bad photos of Koniq10k to the evaluation set. 
+As explained in the resume of last week, we can improve the model by combining different datasets. The main idea is to create a most generalized dataset. These experiments help us evaluate better the performance of the model's architecture. At first, we need to choose which dataset to be combined. AVA and EVA dataset is a good choice as all of their images are aesthetic. On the other hand, the dataset Koniq10k contains images with different levels of distortion. Although images with distortion are not necessarily aesthetic, images that are too distorted are terrible. Hence, I added rejected photos of Koniq10k to the evaluation set. 
 
 These are some hyper-parameters for the combined dataset:
-- Dataset AVA : bad images ( score <= 5); normal images ( score <= 6); good images ( score > 6)
-- Dataset EVA : bad images ( score <= 5); normal images ( score <= 7); good images ( score > 7)
-- Dataset Koniq10k: get only bad image with a score < 40.
+- Dataset AVA : rejected images ( score <= 5); pending images ( score <= 6); accepted images ( score > 6)
+- Dataset EVA : rejected images ( score <= 5); pending images ( score <= 7); accepted images ( score > 7)
+- Dataset Koniq10k: get only rejected image with a score < 40.
 
 After having the evaluation set, I re-evaluated the model that was produced in the first phase. As expected, I observed a significant loss of accuracy on the combined evaluation set. In the same way as concatenating datasets, I created the combined dataset for training. These are some portions of each class in the evaluation set and training set :
 
-| Data set       | % of bad image | % of standard image | % of good image |
+| Data set       | % of rejected image | % of pending image | % of accepted image |
 |----------------|----------------|-------------------|-----------------|
 | Evaluation set |27.56%          |44.99%             |27.50%           |
 | Training set   |29,65%          |35.48%             |34.87%           |
 
-After experimenting and fine-tuning with the same process in the first phase, I achieved a good improvement 
+After experimenting and fine-tuning with the same process in the first phase, I achieved a significant improvement 
 
 |The model                          | Accuracy on AVA | Accuracy on combined dataset|
 |----------------------------------|-----------------|-----------------------------|
@@ -214,7 +213,24 @@ The result is quite disappointed. Although the model is smaller than NIMA, the c
 
 
 ## Tenth week 15/08/2022 - 21/08/2022
-In this week, I focus on realizing the model. In the experiment of seventh week, I have 2 observations. At first
+In this week, I focus on realizing the model. In the experiment of seventh week, I have 2 observations: 
+- At first, adding new dataset makes the model more generalized. The evidence is that the metric on both old dataset and the new ones increase. The reason for this phenomenon is that, instead of adapting only one distribution of on dataset, the model is forced to learn a more generalized distribution.
+- Secondly, although all of our training dataset are for image quality assessment, their subjective is extremely different. EVA and AVA contains only artistic images. In fact, most of images has similar quality.  Koniq10k contains natural images that score by the level of distortion. Hence, image with blur or noise or overexposure is labeled rejected images.
+
+By these observations, I re-arrange the data for training. Images from dataset like AVA or EVA are labeled for standard image or accepted image. While image from distorted dataset like Koniq10k is labeled as rejected image or standard image. Hence, we make an assumption for definition of aesthetic image : **rejected image** is the normal image with distortion; **pending image** is the normal image without distortion or artistic image but badly captured; **accepted image** is a good artistic image.
+
+In addition, I found the dataset [SPAQ][SPAQ]. It contains normal dataset captured by smartphone. The images in SPAQ with score <= 60 are extremely distorted. Hence, I labeled these images as rejected image.
+
+To evaluate the idea, I calculate not only the accuracy on combined evaluation set, but also the accuracy on each class of each component dataset. The following table shows the result :
+
+|Dataset          | Accuracy |
+|-----------------|----------|
+|Combined dataset |0.783     |
+|AVA              |0.812     |
+|EVA              |0.751     |
+|Koniq10k         |0.743     |
+|SPAQ             |0.974     |
+
 
 
 [project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf

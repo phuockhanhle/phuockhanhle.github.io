@@ -194,13 +194,15 @@ In the other hand, I would like to minimize the inference time. It is important 
 The main task of this week is implementation the user interface (UI) for aesthetic image detector. When using this feature, the user doesn't need to config different parameter.  Hence, this interface of configuration is likely the next figure.
 
 
+![iqs aesthetic interface](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/iqs_dl_interface.png?raw=true)
+
 After testing the feature on digikam, I observe that the calculation is quite slow. The reason is that for each image, the model will be loaded from the file to Ram. We can optimize this process by loading the model only one time at the beginning of the feature.
 
 In this week, I made also a research on Vision transformer(Vit) which is the main idea behind the algorithm [musiq][musiq-repo]. The Vision Transformer, or ViT, is a model for image classification that employs a Transformer-like architecture over patches of the image. An image is split into fixed-size patches, each of them are then linearly embedded, position embeddings are added, and the resulting sequence of vectors is fed to a standard Transformer encoder. In order to perform classification, the standard approach of adding an extra learnable “classification token” to the sequence is used. 
 
 The motivation of this approach is to find the relation between different part of image, then, find the important region of image that effect most on the quality. This is in fact the used case of aesthetic image. For example, image with blurred background have only a part that is sharped. Hence, this part is the most important to classify the quality of the image.
 
-The algorithm [musiq][musiq-repo] uses the same idea. However, I do not use directly the code of musiq because of 2 reasons. At first, the model is coded in the new framework [JAX][JAX]. This is the new framework of google for implementing deep learning model. However, it is unstable. It poses a lots of bugs and unexpected error to reproduce the result. Secondly, the model file from JAX is not supported yet by the library DNN of opencv. So, using directly their code can not conclude a model for digiKam. The structure of musiq is much large. Hence, I implement only the main idea : Vision transformer.
+The algorithm [musiq][musiq-repo] uses the same idea. However, I do not use directly the code of musiq because of 2 reasons. At first, the model is coded in the new framework [JAX][JAX]. This is the new framework of google for implementing deep learning model. However, it is unstable. It poses a lots of bugs and unexpected error to reproduce the result. Secondly, the model file from JAX is not supported yet by the library DNN of opencv. So, using directly their code can not conclude a useble model for digiKam. The structure of musiq is much large. Hence, I implement only the main idea : Vision Transformer.
 
 The architecture of my model is presented in the following figure.
 
@@ -209,7 +211,7 @@ The result is quite disappointed. Although the model is smaller than NIMA, the c
 |The model                           | Accuracy on combined dataset|
 |------------------------------------|-----------------------------|
 |InceptionV3 + Dense FC |0.783                        |
-|InceptionV3 + Dense FC |0.547                        |
+|Vision Transformer |0.547                        |
 
 
 ## Tenth week 15/08/2022 - 21/08/2022
@@ -230,6 +232,20 @@ To evaluate the idea, I calculate not only the accuracy on combined evaluation s
 |EVA              |0.751     |
 |Koniq10k         |0.743     |
 |SPAQ             |0.974     |
+
+This model will be used in digiKam
+
+## Eleventh week 15/08/2022 - 21/08/2022
+
+In this week, I focus on 2 tasks : 
+- Until now, we load the model one time for each image. Hence, it consumes a lot of time, and it is not propriate for our case. We should load the model only one time for each we call the feature.
+- After having aesthetic detector with the right model, I evaluate its performance compared to Image Quality Sorter by distortion. I evaluate on 2 features : calculation time and capacity to recognize aesthetic image.
+
+The first task is accomplished by using the <em>static property</em> of C++. I add a static member of model and 2 static methods to load and unload model in AestheticDetector.
+
+In the second task, I run Image Quality Sorter in two ways : normal way ( using 4 distortion detector ) and aesthetic detection. To compare calculation time, I run two ways on 5000 images. While the normal way takes 14 minutes to finish, the aesthetic detector takes only 8 minutes.
+
+
 
 
 

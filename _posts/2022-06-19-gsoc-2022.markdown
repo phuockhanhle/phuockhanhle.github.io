@@ -142,7 +142,7 @@ TODO:
 
 ## Seventh week 25/07/2022 - 31/07/2022
 
-As explained in the resume of last week, we can improve the model by combining different datasets. The main idea is to create a most generalized dataset. These experiments help us evaluate better the performance of the model's architecture. At first, we need to choose which dataset to be combined. AVA and EVA dataset is a good choice as all of their images are aesthetic. On the other hand, the dataset Koniq10k contains images with different levels of distortion. Although images with distortion are not necessarily aesthetic, images that are too distorted are terrible. Hence, I added rejected photos of Koniq10k to the evaluation set. 
+As explained in the resume of last week, we can improve the model by combining different datasets. The main idea is to create a most generalized dataset. These experiments help us evaluate better the performance of the model's architecture. At first, we need to choose which dataset to be combined. AVA and EVA dataset is a good choice as all of their images are aesthetic. On the other hand, the dataset [Koniq10k][Koniq10k] contains images with different levels of distortion. Although images with distortion are not necessarily aesthetic, images that are too distorted are terrible. Hence, I added rejected photos of Koniq10k to the evaluation set. 
 
 These are some hyper-parameters for the combined dataset:
 - Dataset AVA : rejected images ( score <= 5); pending images ( score <= 6); accepted images ( score > 6)
@@ -250,9 +250,29 @@ In the second task, I run Image Quality Sorter in two ways : <em>distortion dete
 | Running time on 5000 images     |863 seconds           | 527 seconds         |
 | Accuracy on EVA dataset         |38.91%                |83.09%               |
 
+## Final phase resume
+
+This part is dedicated to resuming the achievements and problems in the last phase of GSOC22.
+Achievements:
+- (*research side*) Add [Koniq10k][Koniq10k] and [SPAQ][SPAQ] dataset for training and evaluation.
+- (*research side*) Define the property of image for each classes :
+    - **Rejected image** is the normal image with distortion
+    - **Pending image** is the normal image without distortion or artistic image but badly captured 
+    - **Accepted image** is a good artistic image.
+- (*research side*) Fine tune model structure to maximize the metric and minimize calculation time
+- (*research side*) Make a first try on Vision Transformer, the original idea of [Musiq][musiq-repo].
+- (*integration side*) Implement UI for aesthetic detection.
+- (*integration side*) Improve the aesthetic detection's performance by caching the model for run time of IQS.
+- (*integration side*) Evaluate the advantage of IQS using distortion detection and using aesthetic detection. 
+
+Problems:
+- (*research side*) Although the algorithm [Musiq][musiq-repo] reports a better performance than NIMA, I still can not reproduce its result.
+- (*research side*) Most of images for training are natural image. Hence, there are very little people their. Hence. the model could be fail to predict on people image.
+
 
 [EVA]: https://github.com/kang-gnak/eva-dataset
 [AVA]: http://refbase.cvc.uab.es/files/MMP2012a.pdf
+[Koniq10k]: http://database.mmsp-kn.de/koniq-10k-database.html
 [project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf
 [iqs-digikam-repo]: https://github.com/phuockhanhle/iqs-digikam
 [NIMA-repo]: https://github.com/idealo/image-quality-assessment

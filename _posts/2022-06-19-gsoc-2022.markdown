@@ -16,7 +16,7 @@ I aim to test and train the deep learning model following the algorithms. Hence,
 
 These are my principal task in my first week : 
 - Install environment for running python code of NIMA and musiq.
-- Download dataset of EVA and AVA datasets.
+- Download dataset of [EVA][EVA] and [AVA][AVA] datasets.
 - Write training and testing script for NIMA.
 - Adapt the label of 2 datasets for the context of NIMA.
 
@@ -25,7 +25,7 @@ Achievement in the first week :
 - Using the pre-trained model of the paper achieves a good performance: MSE = 0.3107 (means the variance is 3.1 on the scale score of IQS digiKam)
 
 **Current problem**:
-- Most images are labeled with a score of around 5. This is reasonable as if the annotator can not be sure about the quality of the image, they will give a score of 4, 5, or 6. It creates the problem of evaluating the model. The metric MSE will show that it is a accepted model even when the model will predict all the images with a score of 5. These two images show the distribution of the score on 2 datasets: AVA and EVA:
+- Most images are labeled with a score of around 5. This is reasonable as if the annotator can not be sure about the quality of the image, they will give a score of 4, 5, or 6. It creates the problem of evaluating the model. The metric MSE will show that it is a accepted model even when the model will predict all the images with a score of 5. These two images show the distribution of the score on 2 datasets: [AVA][AVA] and [EVA][EVA]:
 
 ![AVA analyses](https://github.com/phuockhanhle/phuockhanhle.github.io/blob/main/image/ava_analyse.png?raw=true)
 
@@ -243,12 +243,16 @@ In this week, I focus on 2 tasks :
 
 The first task is accomplished by using the <em>static property</em> of C++. I add a static member of model and 2 static methods to load and unload model in AestheticDetector.
 
-In the second task, I run Image Quality Sorter in two ways : normal way ( using 4 distortion detector ) and aesthetic detection. To compare calculation time, I run two ways on 5000 images. While the normal way takes 14 minutes to finish, the aesthetic detector takes only 8 minutes.
+In the second task, I run Image Quality Sorter in two ways : <em>distortion detection</em> ( using 4 distortion detector ) and <em>aesthetic detection</em>. To compare calculation time, I run two ways on 5000 images. While the <em>distortion detection</em> takes 14 minutes and 23 seconds  to finish the task, the aesthetic detector takes only 8 minutes. To evaluate the capacity of aesthetic detector, I run two ways on [EVA][EVA] dataset. In this test, I would like to verify the capacity of aesthetic detector compared to using 4 distortion detector. The result is impressive. While <em>distortion detection</em> achieves 38.91% for accuracy of the class, <em>aesthetic detection</em> achieves 83.09% 
+
+|Metric                           | distortion detection | aesthetic detection |
+|---------------------------------|----------------------|---------------------|
+| Running time on 5000 images     |863 seconds           | 527 seconds         |
+| Accuracy on EVA dataset         |38.91%                |83.09%               |
 
 
-
-
-
+[EVA]: https://github.com/kang-gnak/eva-dataset
+[AVA]: http://refbase.cvc.uab.es/files/MMP2012a.pdf
 [project-proposal]: https://summerofcode.withgoogle.com/media/user/3bea17365af2/proposal/znmmTvwbY9aBIkA7.pdf
 [iqs-digikam-repo]: https://github.com/phuockhanhle/iqs-digikam
 [NIMA-repo]: https://github.com/idealo/image-quality-assessment
